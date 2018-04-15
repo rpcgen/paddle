@@ -1,0 +1,42 @@
+apply plugin: 'org.springframework.boot'
+
+springBoot {
+    buildInfo()
+}
+
+dependencyManagement {
+
+    imports {
+        mavenBom 'org.springframework.cloud:spring-cloud-dependencies:Dalston.SR2'
+    }
+}
+
+dependencies {
+
+    // apache commons
+    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.7'
+    compile group: 'commons-io', name: 'commons-io', version: '2.6'
+
+    // spring boot starter
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security'
+
+    // metrics - treexor actuator
+    compile group: 'com.txrlabs.microservices', name: 'spring-boot-starter-treexor-metrics', version: '1.1.17'
+
+    // web - spring web
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
+
+    // logging
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
+    compile group: 'ch.qos.logback', name: 'logback-classic'
+    compile group: 'ch.qos.logback', name: 'logback-core'
+
+    // logging - cloudwatch
+    compile group: 'com.txrlabs.microservices', name: 'cloudwatch-logging-spring-boot-starter', version: '0.9'
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-cloudwatch'
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-core'
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-logs'
+    compile group: 'com.amazonaws', name: 'aws-java-sdk-sts'
+}

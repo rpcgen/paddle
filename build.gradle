@@ -1,0 +1,127 @@
+group   getGroup()
+version getVersion(1)
+
+static def getGroup() {
+    return 'com.ingram'
+}
+
+static def getVersion(mayorVersion) {
+    return '0.0.0-SNAPSHOT'
+}
+
+new File('version').withWriter { out ->
+    out.print project.version
+}
+
+buildscript {
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath('org.springframework.boot:spring-boot-gradle-plugin:1.5.6.RELEASE')
+        classpath('se.transmode.gradle:gradle-docker:1.2')
+    }
+}
+
+subprojects {
+
+    group   parent.project.group
+    version parent.project.version
+
+    apply plugin: 'groovy'
+    apply plugin: 'java'
+
+    test {
+        ignoreFailures = true
+    }
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    buildscript {
+
+        repositories {
+            mavenCentral()
+        }
+
+        dependencies {
+            classpath('org.springframework.boot:spring-boot-gradle-plugin:1.5.6.RELEASE')
+            classpath('se.transmode.gradle:gradle-docker:1.2')
+        }
+    }
+
+    repositories {
+
+        mavenCentral()
+
+        maven { url 'https://repo.spring.io/snapshot'  }
+        maven { url 'https://repo.spring.io/milestone' }
+    }
+
+    dependencies {
+
+        // logging
+        compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.21'
+
+        // testing
+        // -------
+
+        // groovy
+        testCompile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.7'
+
+        // junit
+        testCompile group: 'junit', name: 'junit', version: '4.12'
+
+        // spock
+        testCompile(group: 'org.spockframework', name: 'spock-core', version: '1.1-groovy-2.4-rc-3') {
+            exclude module: 'groovy-all'
+        }
+
+        // spock - mocks
+        testCompile group: 'cglib',         name: 'cglib-nodep', version: '2.2.2'
+        testCompile group: 'org.objenesis', name: 'objenesis',   version: '2.2'
+
+        // spock - spring
+        testCompile group: 'org.spockframework', name: 'spock-spring', version: '1.1-groovy-2.4-rc-3'
+        testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+
+        // logging during tests
+        testCompile group: 'ch.qos.logback', name: 'logback-classic'
+    }
+
+    apply plugin: 'jacoco'
+
+    jacoco {
+        toolVersion = "0.7.5+"
+    }
+
+    test {
+        jacoco {
+            append = false
+            destinationFile = file("$buildDir/coverage-results/coverage.exec")
+            classDumpFile   = file("$buildDir/tmp/jacoco")
+        }
+    }
+
+    jacocoTestReport {
+        reports {
+
+            xml.enabled true
+            xml.destination "${buildDir}/coverage-results/coverage.xml"
+
+            csv.enabled true
+            csv.destination "${buildDir}/coverage-results/coverage.csv"
+
+            html.enabled true
+            html.destination "${buildDir}/reports/coverage"
+        }
+    }
+
+    test {
+        doLast {
+            jacocoTestReport.execute()
+        }
+    }
+}
