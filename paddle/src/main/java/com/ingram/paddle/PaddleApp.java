@@ -16,11 +16,6 @@ public class PaddleApp {
         SecurityContextHolder.setStrategyName(MODE_INHERITABLETHREADLOCAL);
     }
 
-    @Bean
-    public static RestTemplate restTemplate() {
-        return new RestTemplate(new HttpComponentsClientHttpRequestFactory());
-    }
-
     public static void main(String[] args) {
         SpringApplication.run(PaddleApp.class, args);
     }
